@@ -1,0 +1,1 @@
+"""NCAA football analysis package."""
