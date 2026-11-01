@@ -1,31 +1,49 @@
-# Nebraska vs other Division I teams: close-game and late-game loss comparison
+# Worst teams by season-average loss metrics
 
-This analysis compares Nebraska with the population of all other Division I football teams across the selected 10-season window. Rather than adding all other teams together, the comparison uses the mean metric per team so the result reflects the population average, not the total volume of games from the entire field.
+This analysis reports the 10 worst teams for each required loss metric, based on average losses per season across the selected 10-season window.
 
-## Summary table
+## Metric 1: losses by 7 points or fewer after leading earlier
 
-| Comparison | Teams | Avg close-game losses per team-season | Avg late-game lead losses per team-season |
-|---|---:|---:|---:|
-| Nebraska | 1 | 3.00 | 0.67 |
-| All other teams (avg/team) | 737 | 0.44 | 0.20 |
+| Rank | Team | Avg losses per season | Raw losses |
+|---:|---|---:|---:|
+| 1 | Arkansas | 2.67 | 16 |
+| 2 | Akron | 2.33 | 14 |
+| 3 | California | 2.33 | 14 |
+| 4 | Kansas | 2.17 | 13 |
+| 5 | Nebraska | 2.17 | 13 |
+| 6 | Texas State | 2.17 | 13 |
+| 7 | Auburn | 2.00 | 12 |
+| 8 | Georgia State | 2.00 | 12 |
+| 9 | Northern Illinois | 2.00 | 12 |
+| 10 | Old Dominion | 2.00 | 12 |
+
+## Metric 2: losses while still leading in the final 5 minutes
+
+| Rank | Team | Avg losses per season | Raw losses |
+|---:|---|---:|---:|
+| 1 | Kansas | 1.50 | 9 |
+| 2 | USC | 1.50 | 9 |
+| 3 | App State | 1.17 | 7 |
+| 4 | Army | 1.17 | 7 |
+| 5 | Auburn | 1.17 | 7 |
+| 6 | Bryant | 1.17 | 7 |
+| 7 | Louisiana Tech | 1.17 | 7 |
+| 8 | San José State | 1.17 | 7 |
+| 9 | Stanford | 1.17 | 7 |
+| 10 | Georgia State | 1.00 | 6 |
 
 ## Chart
 
-![Nebraska vs all other teams](nebraska_vs_all_others.png)
+![Worst teams by metric](worst_teams_by_metric.png)
 
-## Interpretation
-
-This comparison is designed to answer whether Nebraska's close-game losses and late-game lead issues differ materially from the broader Division I population.
+## Metric definitions
 
 - The first metric measures the average number of losses by 7 points or less in which the losing team led earlier in the game.
 - The second metric measures the average number of losses in which the losing team still held the lead within the final 5 minutes.
-- The all-other-teams value is the arithmetic mean across all non-Nebraska teams in the sample, which avoids inflating the comparison with the total number of games played by the full population.
-
-This approach keeps the comparison focused on team-level patterns rather than raw totals, which is the right lens when the goal is to assess whether Nebraska is unusually prone to late-game collapses or close-game losses relative to peer programs.
 
 ## Methodology
 
 - Filtered to NCAA Division I football losses across the most recent full 10-season window.
 - Used exact game result data and score progression for the required loss definitions.
-- Compared Nebraska directly to the average performance of all non-Nebraska teams.
+- Ranked teams by average losses per season for each metric independently.
 - No estimates or inferred values were used.
