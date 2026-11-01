@@ -19,4 +19,4 @@ source .venv/bin/activate
 python main.py
 ```
 
-This script fetches the latest 10 seasons of game data, computes the requested loss conditions, and prints a Nebraska-vs-all-other-teams summary.
+This script fetches the latest 10 seasons of game data, computes the requested loss conditions, and reports the 10 worst teams in each metric using season-average losses.

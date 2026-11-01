@@ -2,7 +2,7 @@
 
 ## Implementation overview
 
-The implementation will follow the Python-based data-analysis design defined in the project design document. The work is organized as a small, deterministic analytics workflow whose purpose is to compute two exact loss scenarios for NCAA Division I football and compare Nebraska to the rest of the field.
+The implementation will follow the Python-based data-analysis design defined in the project design document. The work is organized as a small, deterministic analytics workflow whose purpose is to compute two exact loss scenarios for NCAA Division I football and rank the 10 worst teams in each metric by season average.
 
 The project will be run from the repository-local virtual environment so all dependencies are installed and isolated in .venv. This gives the repository a clean, reproducible execution environment for future runs and validation.
 
@@ -12,7 +12,7 @@ The project will be run from the repository-local virtual environment so all dep
 
 - data_ingest.py: imports raw game data and normalizes it to a single schema
 - metrics.py: defines the game-level flags for the two requested loss scenarios
-- compare.py: creates Nebraska vs all-other-teams aggregate comparisons
+- compare.py: creates top-10 worst-team aggregate rankings for each metric
 - report.py: writes CSV tables and chart outputs
 - outputs/: destination for generated data and visual artifacts
 
@@ -23,7 +23,7 @@ The project will be run from the repository-local virtual environment so all dep
 3. Normalize fields like season, team names, score, and result.
 4. Compute whether each loss matches condition A or condition B.
 5. Aggregate counts by team and season.
-6. Generate a Nebraska comparison dataset against the all-other-teams cohort.
+6. Generate top-10 team rankings for each metric using season-average losses.
 7. Export clean tables and plot images for reporting.
 
 ### Dependency management
@@ -35,7 +35,7 @@ Dependencies will be installed only inside the local .venv. This keeps the analy
 Implementation will validate behavior by checking the exact logic for each filter condition against known game records. The key controls are:
 
 - each loss is evaluated with the exact scoring margin and lead-history rules
-- Nebraska is compared using the same filters as the rest of the field
+- every team is evaluated using the same filters and season window
 - outputs are built from the source data rather than from precomputed summaries
 - exact counts are preserved in the tables used for the final report
 

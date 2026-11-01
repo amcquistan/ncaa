@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Any, Dict, Iterable, List
 
 import pandas as pd
 
-from src.data_client import ApiError, fetch_games_for_years, fetch_plays_for_years
+from src.data_client import ApiError
 
 
 def latest_complete_seasons(window_size: int = 10) -> List[int]:
@@ -171,16 +171,10 @@ def summarize_by_team(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(records)
 
 
-def neb_vs_all_others(df: pd.DataFrame, team_name: str = "Nebraska") -> pd.DataFrame:
+def worst_teams_by_metric(df: pd.DataFrame, top_n: int = 10) -> tuple[pd.DataFrame, pd.DataFrame]:
     if df.empty:
-        return pd.DataFrame(columns=[
-            "comparison_group",
-            "teams_in_sample",
-            "avg_close_game_losses_per_team",
-            "avg_late_game_lead_losses_per_team",
-            "raw_close_game_losses",
-            "raw_late_game_lead_losses",
-        ])
+        empty = pd.DataFrame(columns=["team", "avg_losses_per_season", "raw_losses"])
+        return empty, empty
 
     season_count = int(df["season"].nunique()) if "season" in df.columns else 1
     season_count = max(season_count, 1)
@@ -193,31 +187,26 @@ def neb_vs_all_others(df: pd.DataFrame, team_name: str = "Nebraska") -> pd.DataF
         )
         .reset_index()
     )
+    close_game_worst = (
+        team_metrics.assign(
+            avg_losses_per_season=lambda frame: frame["raw_close_game_losses"].astype(float) / season_count
+        )
+        .rename(columns={"loser": "team", "raw_close_game_losses": "raw_losses"})
+        .loc[:, ["team", "avg_losses_per_season", "raw_losses"]]
+        .sort_values(by=["avg_losses_per_season", "raw_losses", "team"], ascending=[False, False, True])
+        .head(top_n)
+        .reset_index(drop=True)
+    )
 
-    neb_subset = team_metrics[team_metrics["loser"].str.lower() == team_name.lower()]
-    other_subset = team_metrics[team_metrics["loser"].str.lower() != team_name.lower()]
+    late_lead_worst = (
+        team_metrics.assign(
+            avg_losses_per_season=lambda frame: frame["raw_late_game_lead_losses"].astype(float) / season_count
+        )
+        .rename(columns={"loser": "team", "raw_late_game_lead_losses": "raw_losses"})
+        .loc[:, ["team", "avg_losses_per_season", "raw_losses"]]
+        .sort_values(by=["avg_losses_per_season", "raw_losses", "team"], ascending=[False, False, True])
+        .head(top_n)
+        .reset_index(drop=True)
+    )
 
-    rows: List[Dict[str, Any]] = []
-
-    if not neb_subset.empty:
-        neb_row = neb_subset.iloc[0]
-        rows.append({
-            "comparison_group": "Nebraska",
-            "teams_in_sample": 1,
-            "avg_close_game_losses_per_team": float(neb_row["raw_close_game_losses"]) / season_count,
-            "avg_late_game_lead_losses_per_team": float(neb_row["raw_late_game_lead_losses"]) / season_count,
-            "raw_close_game_losses": int(neb_row["raw_close_game_losses"]),
-            "raw_late_game_lead_losses": int(neb_row["raw_late_game_lead_losses"]),
-        })
-
-    if not other_subset.empty:
-        rows.append({
-            "comparison_group": "All other teams (avg/team)",
-            "teams_in_sample": int(len(other_subset)),
-            "avg_close_game_losses_per_team": float(other_subset["raw_close_game_losses"].mean()) / season_count,
-            "avg_late_game_lead_losses_per_team": float(other_subset["raw_late_game_lead_losses"].mean()) / season_count,
-            "raw_close_game_losses": int(other_subset["raw_close_game_losses"].sum()),
-            "raw_late_game_lead_losses": int(other_subset["raw_late_game_lead_losses"].sum()),
-        })
-
-    return pd.DataFrame(rows)
+    return close_game_worst, late_lead_worst

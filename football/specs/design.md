@@ -2,11 +2,11 @@
 
 ## Overview
 
-This project analyzes NCAA Division I football outcomes over a 10-season window and compares Nebraska’s loss profile against all other programs. The analysis is driven by the exact requirements in the project brief:
+This project analyzes NCAA Division I football outcomes over a 10-season window and ranks teams by two collapse-style loss metrics. The analysis is driven by the exact requirements in the project brief:
 
 - Identify losses by 7 points or less where the losing team led earlier in the game.
 - Identify losses where the losing team held the lead within the final 5 minutes.
-- Compare Nebraska vs every other team across the same conditions.
+- Report the 10 worst teams in each metric as season averages.
 - Produce both tabular results and graphical summaries.
 - Use only observed, exact game data; no estimates or inferred values.
 
@@ -35,7 +35,7 @@ The project will follow a straightforward data pipeline:
 2. Standardize team names and season identifiers.
 3. Compute loss condition flags.
 4. Aggregate by team and season.
-5. Compare Nebraska against all other teams.
+5. Rank teams by each metric using average losses per season.
 6. Export tabular output and generated charts.
 
 This pipeline is efficient because the analysis is entirely batch-oriented: one canonical dataset, one set of filters, and a deterministic aggregation process. It also minimizes the risk of inconsistent logic across multiple report views.
@@ -55,23 +55,23 @@ Loss condition B:
 
 These conditions are computed using the game’s score progression and lead status, not by approximating trends from season summaries.
 
-### 4. Standardize reporting around Nebraska vs all others
+### 4. Standardize reporting around worst-team rankings
 
-The project compares Nebraska as a single team profile to the full population of all other Division I teams. To keep the output unbiased and consistent, the following rules apply:
+The project ranks teams across the Division I population for each metric. To keep the output unbiased and consistent, the following rules apply:
 
-- Nebraska is evaluated as a named team key in each season.
-- All other teams are included in the comparison set for the same seasons.
-- Aggregations are computed on the exact same filtered criteria for both groups.
-- Report tables should include counts, not estimates.
+- All teams are evaluated with the same metric definitions and season window.
+- Aggregations use average losses per season.
+- Rankings are computed independently for each metric.
+- Report tables should include exact values, not estimates.
 
-This ensures the comparison is apples-to-apples and follows the requirement exactly.
+This ensures the ranking is apples-to-apples and follows the requirement exactly.
 
 ### 5. Output both data and visuals
 
 The reporting layer will generate:
 - a tabular summary by team and metric
-- a side-by-side comparison chart for Nebraska vs the rest of the field
-- a chart per scenario that highlights the exact counts for each condition
+- a chart for the 10 worst teams in each metric
+- exact count context alongside averages
 
 The visualizations are intended to support interpretation, but the underlying tables remain the source of truth. No estimated or projected values will be developed for the report.
 
@@ -83,7 +83,7 @@ The system can be organized as a small set of Python modules and artifacts:
 
 - data_ingest.py: loads raw game results and normalizes fields
 - metrics.py: defines loss-condition logic and seasonal aggregation
-- compare.py: computes Nebraska vs all-other-teams comparisons
+- compare.py: computes worst-team rankings by metric
 - report.py: builds tables and plots
 - outputs/: stores generated CSV and PNG artifacts
 
@@ -116,7 +116,7 @@ These fields allow the system to derive the exact metrics without re-reading raw
 3. Standardize school names and season years.
 4. Compute the two loss-condition flags.
 5. Group by team and season.
-6. Build Nebraska-specific and all-other-team aggregates.
+6. Build team-level seasonal averages and rank the worst teams.
 7. Generate tables and charts.
 8. Save outputs in a reproducible report directory.
 
@@ -132,9 +132,9 @@ This avoids partial-season bias and keeps the analysis consistent over a stable 
 
 The project does not specify a scoreboard source. The design resolves this by using a canonical game-result dataset that can be loaded from a local CSV or a vetted sports data source. The analytics logic is independent of the source format as long as each row contains game result and lead-status fields.
 
-### Ambiguity: How should Nebraska be separated from all other teams?
+### Ambiguity: How should teams be ranked across the dataset?
 
-The design resolves this by treating Nebraska as a single comparison team and grouping all remaining schools into the “all other teams” cohort for each metric. No mixing between seasons or partial filters is allowed.
+The design resolves this by computing each team's average losses per season for each metric and ranking teams in descending order. No mixing between seasons or partial filters is allowed.
 
 ## Risks and considerations
 
@@ -158,6 +158,6 @@ This ensures the project remains isolated from the system Python and keeps the i
 The design is successful when:
 
 - the exact two loss conditions are computed correctly for all games in scope
-- Nebraska’s totals are directly comparable with all other teams
+- the top-10 rankings are computed directly from exact team-level season averages
 - results are available in both tabular and graphical form
 - no estimated or inferred values appear in the final report
