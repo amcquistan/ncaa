@@ -68,8 +68,3 @@ Thumbs.db
 .env.*
 !.env.example
 
-# Project output artifacts
-output/
-
-# Local data cache
-cache/
