@@ -4,10 +4,10 @@ This analysis compares Nebraska with the population of all other Division I foot
 
 ## Summary table
 
-| Comparison | Teams | Avg close-game losses per team | Avg late-game lead losses per team |
+| Comparison | Teams | Avg close-game losses per team-season | Avg late-game lead losses per team-season |
 |---|---:|---:|---:|
-| Nebraska | 1 | 18.00 | 4.00 |
-| All other teams (avg/team) | 737 | 2.66 | 1.19 |
+| Nebraska | 1 | 3.00 | 0.67 |
+| All other teams (avg/team) | 737 | 0.44 | 0.20 |
 
 ## Chart
 

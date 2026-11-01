@@ -13,18 +13,27 @@ def save_summary_chart(summary: pd.DataFrame, output_path: str | Path) -> str:
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    fig, ax = plt.subplots(figsize=(8, 5))
-    labels = summary["comparison_group"].tolist()
-    bars_a = summary["avg_close_game_losses_per_team"].tolist()
-    bars_b = summary["avg_late_game_lead_losses_per_team"].tolist()
+    neb = summary[summary["comparison_group"] == "Nebraska"].iloc[0]
+    others = summary[summary["comparison_group"] == "All other teams (avg/team)"].iloc[0]
 
-    x = range(len(labels))
-    ax.bar([i - 0.2 for i in x], bars_a, width=0.35, label="Avg close-game losses per team")
-    ax.bar([i + 0.2 for i in x], bars_b, width=0.35, label="Avg late-game lead losses per team")
+    categories = [
+        "Close-game losses\n(≤7 pts, earlier lead)",
+        "Late-game lead losses\n(last 5 minutes)",
+    ]
+    nebraska_values = [neb["avg_close_game_losses_per_team"], neb["avg_late_game_lead_losses_per_team"]]
+    others_values = [others["avg_close_game_losses_per_team"], others["avg_late_game_lead_losses_per_team"]]
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    x = range(len(categories))
+    width = 0.35
+
+    ax.bar([i - width / 2 for i in x], nebraska_values, width=width, label="Nebraska")
+    ax.bar([i + width / 2 for i in x], others_values, width=width, label="All other teams")
+
     ax.set_xticks(list(x))
-    ax.set_xticklabels(labels, rotation=0)
-    ax.set_ylabel("Average count per team")
-    ax.set_title("Nebraska vs all other D1 teams: mean close-game and late-game loss profile")
+    ax.set_xticklabels(categories)
+    ax.set_ylabel("Average count per team-season")
+    ax.set_title("Nebraska vs all other D1 teams")
     ax.legend()
     plt.tight_layout()
     fig.savefig(output_path, dpi=200)
@@ -46,7 +55,7 @@ This analysis compares Nebraska with the population of all other Division I foot
 
 ## Summary table
 
-| Comparison | Teams | Avg close-game losses per team | Avg late-game lead losses per team |
+| Comparison | Teams | Avg close-game losses per team-season | Avg late-game lead losses per team-season |
 |---|---:|---:|---:|
 | Nebraska | 1 | {Nebraska["avg_close_game_losses_per_team"]:.2f} | {Nebraska["avg_late_game_lead_losses_per_team"]:.2f} |
 | All other teams (avg/team) | {others["teams_in_sample"]} | {others["avg_close_game_losses_per_team"]:.2f} | {others["avg_late_game_lead_losses_per_team"]:.2f} |

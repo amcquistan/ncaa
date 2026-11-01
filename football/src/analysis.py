@@ -182,6 +182,9 @@ def neb_vs_all_others(df: pd.DataFrame, team_name: str = "Nebraska") -> pd.DataF
             "raw_late_game_lead_losses",
         ])
 
+    season_count = int(df["season"].nunique()) if "season" in df.columns else 1
+    season_count = max(season_count, 1)
+
     team_metrics = (
         df.groupby("loser")
         .agg(
@@ -201,8 +204,8 @@ def neb_vs_all_others(df: pd.DataFrame, team_name: str = "Nebraska") -> pd.DataF
         rows.append({
             "comparison_group": "Nebraska",
             "teams_in_sample": 1,
-            "avg_close_game_losses_per_team": float(neb_row["raw_close_game_losses"]),
-            "avg_late_game_lead_losses_per_team": float(neb_row["raw_late_game_lead_losses"]),
+            "avg_close_game_losses_per_team": float(neb_row["raw_close_game_losses"]) / season_count,
+            "avg_late_game_lead_losses_per_team": float(neb_row["raw_late_game_lead_losses"]) / season_count,
             "raw_close_game_losses": int(neb_row["raw_close_game_losses"]),
             "raw_late_game_lead_losses": int(neb_row["raw_late_game_lead_losses"]),
         })
@@ -211,8 +214,8 @@ def neb_vs_all_others(df: pd.DataFrame, team_name: str = "Nebraska") -> pd.DataF
         rows.append({
             "comparison_group": "All other teams (avg/team)",
             "teams_in_sample": int(len(other_subset)),
-            "avg_close_game_losses_per_team": float(other_subset["raw_close_game_losses"].mean()),
-            "avg_late_game_lead_losses_per_team": float(other_subset["raw_late_game_lead_losses"].mean()),
+            "avg_close_game_losses_per_team": float(other_subset["raw_close_game_losses"].mean()) / season_count,
+            "avg_late_game_lead_losses_per_team": float(other_subset["raw_late_game_lead_losses"].mean()) / season_count,
             "raw_close_game_losses": int(other_subset["raw_close_game_losses"].sum()),
             "raw_late_game_lead_losses": int(other_subset["raw_late_game_lead_losses"].sum()),
         })
